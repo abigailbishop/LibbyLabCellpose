@@ -245,7 +245,7 @@ def main():
         help="If provided, code will update csv output in --dir_to_analyze.")
     parser.add_argument(
         '--edge_buffer', type=int, default=5,
-        help=("ROIs within this many pixes of the edge are ignored in the "
+        help=("ROIs within this many pixels of the edge are ignored in the "
               "width and height calculation.")
     )
     parser.add_argument(
@@ -265,7 +265,7 @@ def main():
     image_files = [ args.dir_to_analyze+f 
                     for f in dir_contents if f[-4:]==("."+args.image_extension) ]
     print(f"\nStarting script. Will analyze {len(image_files)} "
-            f"slides from:\n\t{args.dir_to_analyze}")
+            f"images from:\n\t{args.dir_to_analyze}")
     image_files.sort()
 
     # Load plotting package if saving cell boundary images
@@ -301,7 +301,7 @@ def main():
                       for f in dir_contents if f[-4:]==".npy" ]
         seg_files.sort()
         print(f"\nStarting script. Will update cellpose_output.csv for "
-              f"{len(seg_files)} slides from:\n\t{args.dir_to_analyze}")
+              f"{len(seg_files)} images from:\n\t{args.dir_to_analyze}")
     
     # Run segmenter
     update_every = 24

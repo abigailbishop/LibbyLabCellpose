@@ -1,10 +1,10 @@
 # LibbyLabCellpose
 
-This repository contains the script that uses the [Cellpose](https://www.cellpose.org) module and models trained on retinal ganglion cell identification for analysis in Professor [Richard Libby's lab](https://www.urmc.rochester.edu/eye-institute/research/labs/libby) at the University of Rochester. This script expands on the Cellpose package to analyze and summarize a directory of images, compiling information into one file. This work was led by Sarah Yablonski (University of Rochester) and Abigail Bishop (University of Wisconsin Madison). Please contact Professor Richard Libby with questions and comments.
+This repository contains the script that uses the [Cellpose](https://cellpose.readthedocs.io/en/latest/) module and models trained to identify retinal ganglion cells for analysis, first made for use in Professor [Richard Libby's lab](https://www.urmc.rochester.edu/eye-institute/research/labs/libby) at the University of Rochester Medical Center. This synthesizes Cellpose outputs for one or more images into one summary comma-separated value file, compiling both new calculations and pre-existing analysis metrics for each file. This work was led by Sarah Yablonski (University of Rochester) and Abigail Bishop (University of Wisconsin Madison). Please contact Professor Richard Libby with questions and comments.
 
 # Contents
 
-- `libbylab_cellpose.py` is the script that can takes a directory full of images, analyzes them, and returns a comma-separated value file with each image's average background luminance, average cell luminance, background area, total cell area, average cell area, average cell width, and average cell height. 
+- `libbylab_cellpose.py` is the script that takes a directory full of images, analyzes them, and returns a comma-separated value file with each image's average background luminance, average cell luminance, background area, total cell area, average cell area, average cell width, and average cell height.
 - `models/` contains a variety of models for use with Cellpose curated to identify retinal ganglion cells (RGCs). 
     - `Brn3a_40X_final`: Annotates RGCs identified using the marker [BRN3A](https://pubmed.ncbi.nlm.nih.gov/19264888/), with image taken at 40X magnification
     - `RBPMS_10X_Keyence_final`: Annotates RGCs identified using [RBPMS](https://pubmed.ncbi.nlm.nih.gov/24318667/) in a full retina. This model was trained using images taken on a Keyence BZ-X800 epifluorescent microscope at 10X magnification.
@@ -22,12 +22,12 @@ This repository contains the script that uses the [Cellpose](https://www.cellpos
 
 You can do a lot of this by dragging and dropping files into your terminal. You shouldn't need to enter the directory containing the script with your Terminal if you use drag-and-drop. Drag-and-dropping should automatically add spaces between each item you drag into your Terminal but please be mindful if it doesn't.  
 
-1. Open your terminal. If you have an environment, make sure its initialized.
+1. Open your terminal. If you have an environment, make sure it is initialized.
 1. Type `python`
 1. Type the path or drag-and-drop the libbylab_cellpose.py python file into your Terminal
 1. Type the path or drag-and-drop the folder (containing all the images you want to analyze) into your Terminal
 1. Type the path or drag-and-drop the model you want to use into your Terminal
-1. If you want to change your cypoplasm color, nucleus color (both default to gray) or cell diameter (defaults to 60 pixels) you can specify this now. For example type `--cytoplasm_color 2` for green cytoplasm (note the space before 2)
+1. If you want to change the expected cytoplasm color, nucleus color (both default to gray) or cell diameter (defaults to 60 pixels) you can specify this now. For example, type `--cytoplasm_color 2` for green cytoplasm (note the space before 2)
 
 # What the script outputs: 
 
@@ -41,7 +41,7 @@ You can do a lot of this by dragging and dropping files into your terminal. You 
 
 # To run the script over new npy files (update the csv)
 
-1. Open Terminal. If you have an environment, make sure its initialized.
+1. Open Terminal. If you have an environment, make sure it is initialized.
 1. Type `python`
 1. Type the path or drag-and-drop the libbylab_cellpose.py python file into your Terminal
 1. Type the path or drag-and-drop the folder (containing all the images you analyzed and their new seg.npy files) into your Terminal
@@ -54,7 +54,7 @@ There is a lot of information printed to the screen so that you can monitor the 
 
 The start of the script will tell you how many (JPG) images are in the folder you provided. It looks like this: 
 ```
-Starting script. Will analyze 144 slides from:
+Starting script. Will analyze 144 images from:
     /Users/abigailbishop/Documents/cellpose/
 Using the model:
     /Users/abigailbishop/Documents/cellpose/RGC_Count
@@ -64,7 +64,7 @@ The script will tell you which image its analyzing. It only outputs the index of
 
 Note: This output begins counting at 0, not at 1. So if you see 13 output in this context, you are actually in the process of analyzing your 14th image, not the 13th. That's why you see `About image ...` information for images 0-4 and not for images 1-5.
 
-For each image, the script outputs a period 3 times (mimicing a progress bar)
+For each image, the script outputs a period 3 times (mimicking a progress bar)
 1. After an image is loaded
 1. After Cellpose segmented the image. This takes the longest, expect to see a single period for a small while per image.
 1. After the segmented `.seg` file is saved
@@ -119,7 +119,7 @@ options:
                         If provided, code will update csv output in
                         --dir_to_analyze.
   --edge_buffer EDGE_BUFFER
-                        ROIs within this many pixes of the edge are ignored in
+                        ROIs within this many pixels of the edge are ignored in
                         the width and height calculation.
   --image_extension IMAGE_EXTENSION
                         Extension of the images you intend to analyze.
