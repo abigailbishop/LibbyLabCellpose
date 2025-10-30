@@ -246,7 +246,7 @@ def main():
     parser.add_argument(
         '--edge_buffer', type=int, default=5,
         help=("ROIs within this many pixels of the edge are ignored in the "
-              "width and height calculation.")
+              "area, width, and height calculation.")
     )
     parser.add_argument(
         '--image_extension', type=str, default="JPG",
@@ -254,7 +254,7 @@ def main():
     parser.add_argument(
         '--save_boundary_images', action="store_true",
         help=("If present, will save pngs depicting rectangular boundaries "
-              "used to calculate cell width and height.")
+              "used to calculate cell area, width, and height.")
     )
     args = parser.parse_args()
     

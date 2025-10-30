@@ -6,10 +6,10 @@ This repository contains the script that uses the [Cellpose](https://cellpose.re
 
 - `libbylab_cellpose.py` is the script that takes a directory full of images, analyzes them, and returns a comma-separated value file with each image's average background luminance, average cell luminance, background area, total cell area, average cell area, average cell width, and average cell height.
 - `models/` contains a variety of models for use with Cellpose curated to identify retinal ganglion cells (RGCs). 
-    - `Brn3a_40X_final`: Annotates RGCs identified using the marker [BRN3A](https://pubmed.ncbi.nlm.nih.gov/19264888/), with image taken at 40X magnification
+    - `Brn3a_40X_final`: Annotates RGCs identified using the marker [BRN3A](https://pubmed.ncbi.nlm.nih.gov/19264888/), with images taken at 40X magnification
     - `RBPMS_10X_Keyence_final`: Annotates RGCs identified using [RBPMS](https://pubmed.ncbi.nlm.nih.gov/24318667/) in a full retina. This model was trained using images taken on a Keyence BZ-X800 epifluorescent microscope at 10X magnification.
-    - `RBPMS_40X_final`: Annotates RGCs identified using the marker [RBPMS](https://pubmed.ncbi.nlm.nih.gov/24318667/), with image taken at 40X magnification
-    - `TUJ1_40X_final`: Annotates RCGs identified using the marker [TUJ1](https://onlinelibrary.wiley.com/doi/abs/10.1002/neu.480220109), with image taken at 40X magnification
+    - `RBPMS_40X_final`: Annotates RGCs identified using the marker [RBPMS](https://pubmed.ncbi.nlm.nih.gov/24318667/), with images taken at 40X magnification
+    - `TUJ1_40X_final`: Annotates RCGs identified using the marker [TUJ1](https://onlinelibrary.wiley.com/doi/abs/10.1002/neu.480220109), with images taken at 40X magnification
 
 # Summary of Cellpose procedure:
 
@@ -45,6 +45,7 @@ You can do a lot of this by dragging and dropping files into your terminal. You 
 1. Type `python`
 1. Type the path or drag-and-drop the libbylab_cellpose.py python file into your Terminal
 1. Type the path or drag-and-drop the folder (containing all the images you analyzed and their new seg.npy files) into your Terminal
+1. Type the path or drag-and-drop the model you used into your Terminal
 1. Type `--update_csv ` (don't forget the space)
 1. Type the path or drag-and-drop the csv file you'd like to update into your Terminal
 
@@ -120,10 +121,10 @@ options:
                         --dir_to_analyze.
   --edge_buffer EDGE_BUFFER
                         ROIs within this many pixels of the edge are ignored in
-                        the width and height calculation.
+                        the area, width, and height calculation.
   --image_extension IMAGE_EXTENSION
                         Extension of the images you intend to analyze.
   --save_boundary_images
                         If present, will save pngs depicting rectangular
-                        boundaries used to calculate cell width and height.
+                        boundaries used to calculate cell area, width, and height.
 ```
