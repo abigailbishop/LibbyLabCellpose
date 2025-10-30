@@ -1,15 +1,15 @@
 # LibbyLabCellpose
 
-This repository contains the script that uses the [Cellpose](https://www.cellpose.org) module and models trained on retinal ganglion cell identification for analysis in Professor [Richard Libby's lab](https://www.urmc.rochester.edu/eye-institute/research/labs/libby) at the University of Rochester. This script expands on the Cellpose package to analyze and summarize a directory of images, compiling information into one file. This work was led by Sarah Yablonski (University of Rochester) and Abigail Bishop (University of Wisconsin Madison).
+This repository contains the script that uses the [Cellpose](https://www.cellpose.org) module and models trained on retinal ganglion cell identification for analysis in Professor [Richard Libby's lab](https://www.urmc.rochester.edu/eye-institute/research/labs/libby) at the University of Rochester. This script expands on the Cellpose package to analyze and summarize a directory of images, compiling information into one file. This work was led by Sarah Yablonski (University of Rochester) and Abigail Bishop (University of Wisconsin Madison). Please contact Professor Richard Libby with questions and comments.
 
 # Contents
 
 - `libbylab_cellpose.py` is the script that can takes a directory full of images, analyzes them, and returns a comma-separated value file with each image's average background luminance, average cell luminance, background area, total cell area, average cell area, average cell width, and average cell height. 
-- `models/` contains a variety of models for use with Cellpose curated to identify retinal ganglion cells. 
-    - `Brn3a_40X_final`: Targets retinal ganglion cells stained with Brn3a
-    - `RBPMS_10X_Keyence_final`: Targets retinal ganglion cells stained with RBPMS at 10x magnification
-    - `RBPMS_40X_final`: Targets retinal ganglion cells stained with RBPMS
-    - `TUJ1_40X_final`: Targets retinal ganglion cells stained with TUJ1
+- `models/` contains a variety of models for use with Cellpose curated to identify retinal ganglion cells (RGCs). 
+    - `Brn3a_40X_final`: Annotates RGCs identified using the marker [BRN3A](https://pubmed.ncbi.nlm.nih.gov/19264888/), with image taken at 40X magnification
+    - `RBPMS_10X_Keyence_final`: Annotates RGCs identified using [RBPMS](https://pubmed.ncbi.nlm.nih.gov/24318667/) in a full retina. This model was trained using images taken on a Keyence BZ-X800 epifluorescent microscope at 10X magnification.
+    - `RBPMS_40X_final`: Annotates RGCs identified using the marker [RBPMS](https://pubmed.ncbi.nlm.nih.gov/24318667/), with image taken at 40X magnification
+    - `TUJ1_40X_final`: Annotates RCGs identified using the marker [TUJ1](https://onlinelibrary.wiley.com/doi/abs/10.1002/neu.480220109), with image taken at 40X magnification
 
 # Summary of Cellpose procedure:
 
