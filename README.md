@@ -2,6 +2,10 @@
 
 This repository contains the script that uses the [Cellpose](https://cellpose.readthedocs.io/en/latest/) module and models trained to identify retinal ganglion cells for analysis, first made for use in Professor [Richard Libby's lab](https://www.urmc.rochester.edu/eye-institute/research/labs/libby) at the University of Rochester Medical Center. This synthesizes Cellpose outputs for one or more images into one summary comma-separated value file, compiling both new calculations and pre-existing analysis metrics for each file. This work was led by Sarah Yablonski (University of Rochester) and Abigail Bishop (University of Wisconsin Madison). Please contact Professor Richard Libby with questions and comments.
 
+# Software Versions
+
+This script has been used successfully with Cellpose versions 2 and 3. Cellpose 4 currently does not work with our script. You can find the link to specific versions of Cellpose on [this page](https://github.com/MouseLand/cellpose/tags).
+
 # Contents
 
 - `libbylab_cellpose.py` is the script that takes a directory full of images, analyzes them, and returns a comma-separated value file with each image's average background luminance, average cell luminance, background area, total cell area, average cell area, average cell width, and average cell height.
