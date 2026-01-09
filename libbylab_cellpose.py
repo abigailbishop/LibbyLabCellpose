@@ -111,12 +111,12 @@ def get_area_info(masks, ROIs):
     
     return area_of_image, area_of_ROIs
 
-def get_widths_heights(masks, ROIs, plot_path, edge_buffer=1, save_images=False):
+def get_centers_widths_heights(masks, ROIs, plot_path, edge_buffer=1, save_images=False):
     """
-    Calculates and returns the widths and heights of each ROI in the image.
-    Each index in `widths` and `heights` corresponds to the ROI with that label.
-    Any `widths[ROI]` and `heights[ROI]` that are set to 0 were not sized
-      (or had a size of 0)
+    Calculates and returns the centers, widths, and heights of each ROI in the image.
+    Each index in `centers`, `widths`, and `heights` corresponds to the ROI with that label.
+    Any `centers[ROI]`, `widths[ROI]`, and `heights[ROI]` that are set to 0 were not sized
+      (or had a size of 0).
     
     Parameters
     ----------
@@ -127,6 +127,8 @@ def get_widths_heights(masks, ROIs, plot_path, edge_buffer=1, save_images=False)
         
     Returns
     -------
+    centers : numpy.ndarray
+        Locations of the centers of the rectangles fit around each ROI in pixels.
     widths : list
         Width of each ROI in pixels
     heights : list
@@ -134,6 +136,7 @@ def get_widths_heights(masks, ROIs, plot_path, edge_buffer=1, save_images=False)
     """
 
     # Initialize the arrays of widths and heights that will be returned
+    centers = np.zeros((len(ROIs), 2))
     widths = np.zeros(len(ROIs))
     heights = np.zeros(len(ROIs))
 
@@ -147,10 +150,13 @@ def get_widths_heights(masks, ROIs, plot_path, edge_buffer=1, save_images=False)
         ROI_image[ROI_locs] = 255
         ROI_image = ROI_image.astype(np.uint8)
 
-        # Get the contouring of this ROI and save width and height
+        # Get the contouring of this ROI 
         contours, hierarchy = cv2.findContours(
             ROI_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        x_y, (width, height), angle_of_rotation = cv2.minAreaRect(contours[0])
+        rectangle_center, (width, height), angle_of_rotation = cv2.minAreaRect(contours[0])
+
+        # Save the center
+        centers[n_ROI] = rectangle_center
 
         # Save the larger of width and height as the width so its always bigger
         if width >= height: 
@@ -173,11 +179,55 @@ def get_widths_heights(masks, ROIs, plot_path, edge_buffer=1, save_images=False)
         ax.set_title(f"After Removing ROIs within {edge_buffer} Pixels of the Edge")
         ax.set_xlabel("X [pixels]")
         ax.set_ylabel("Y [pixels]")
+        matplotlib.pyplot.tight_layout()
         matplotlib.pyplot.savefig(plot_path)
         matplotlib.pyplot.close()
         del fig, ax
 
-    return widths, heights
+    return centers, widths, heights
+
+def hist2d(
+    x_array, y_array, 
+    cmap="inferno", figsize=(5,4),
+    bins=10, xyranges=None, 
+    weights=None, density=None, 
+    x_label=None, y_label=None, title=None,
+    cbar_min=None, cbar_max=None, cbar_label=None, cbar_norm=None, 
+    save_name=None, white_background_limit=True
+):
+    """
+    Plots a 2D histogram 
+    """
+    
+    fig, ax = matplotlib.pyplot.subplots(figsize=figsize)
+    if isinstance(cmap, matplotlib.colors.ListedColormap) and white_background_limit:
+        cmap.set_under("w", white_background_limit)
+    H, xbins, ybins = np.histogram2d(
+        x_array, y_array, bins=bins, range=xyranges,
+        weights=weights, density=density
+    )
+    extent = [xbins[0], xbins[-1], ybins[0], ybins[-1]]
+    mappable = ax.imshow(H.T, extent=extent, cmap=cmap, 
+                         origin='lower', aspect='equal', norm=cbar_norm)
+    
+    if x_label  !=None: ax.set_xlabel(x_label)
+    if y_label  !=None: ax.set_ylabel(y_label)
+    if title    !=None: ax.set_title(title)
+    if cbar_min !=None: mappable.norm.vmin = cbar_min
+    if cbar_max !=None: mappable.norm.vmax = cbar_max
+    
+    if cbar_label is None: 
+        if isinstance(weights, np.ndarray) or isinstance(weights, list):
+            cbar_label="Weighted Number of Events"
+        else:
+            cbar_label="Number of Events"
+    matplotlib.pyplot.colorbar(mappable=mappable, label=cbar_label)
+
+    matplotlib.pyplot.tight_layout()
+    
+    if save_name!=None: matplotlib.pyplot.savefig(save_name, dpi=300)
+        
+    return fig, ax
 
 def compare_csv_files(old_info, updated_info):
     """
@@ -238,7 +288,7 @@ def main():
         '--cell_diameter', type=int, default=60,
         help="Expected diameter of cells, in pixels.")
     parser.add_argument(
-        '--um_per_pixel', type=int, default=1,
+        '--um_per_pixel', type=float, default=1.,
         help="Micrometers per pixel.")
     parser.add_argument(
         '--update_csv', type=str, default=None,
@@ -256,6 +306,14 @@ def main():
         help=("If present, will save pngs depicting rectangular boundaries "
               "used to calculate cell area, width, and height.")
     )
+    parser.add_argument(
+        '--plot_isodensity_map', action="store_true",
+        help=("If present, will save an isodensity map of the identified cells.")
+    )
+    parser.add_argument(
+        '--isodensity_map_binsize', type=float, default=1,
+        help=("Size of isodensity map bins in millimeters.")
+    )
     args = parser.parse_args()
     
     # Get list of files in folder
@@ -268,8 +326,8 @@ def main():
             f"images from:\n\t{args.dir_to_analyze}")
     image_files.sort()
 
-    # Load plotting package if saving cell boundary images
-    if args.save_boundary_images: 
+    # Load plotting package if saving cell boundary images or plotting the isodensity maps
+    if args.save_boundary_images or args.plot_isodensity_map: 
         globals()["matplotlib"] = __import__(
             "matplotlib", globals(), locals(), ['pyplot'], 0)
     
@@ -352,13 +410,36 @@ def main():
             L for ROI_Ls in luminances_of_ROIs_by_ROI 
             for L in ROI_Ls 
         ] # Flatten luminances array so it's compatible with numpy
-        widths, heights = get_widths_heights(
+        centers, widths, heights = get_centers_widths_heights(
             masks, ROIs_not_edge,
             image_files[i][:-1*len(args.image_extension)]+"pdf", 
             args.edge_buffer, 
             save_images=args.save_boundary_images
         )
-        
+
+        # Create the isodensity map, if one was requested
+        # Make figure size real
+
+        if args.plot_isodensity_map:
+            image_width = cellpose_image.shape[1] # in pixels
+            image_height = cellpose_image.shape[0] # in pixels
+            millimeters_per_pixel = args.um_per_pixel/1000
+            hist2d(
+                *(centers.T * millimeters_per_pixel), # Convert location of cell centers to locations in millimeters
+                bins=(
+                    np.arange( image_width // (args.isodensity_map_binsize/millimeters_per_pixel) + 1 ), # X bins
+                    np.arange( image_height // (args.isodensity_map_binsize/millimeters_per_pixel) + 1 ) # Y bins
+                ), # Get the number of bins in each dimension based on the image size and requested binsize
+                figsize=(
+                    4.8 * (image_width/image_height) * 1.25, # Width of final image (in inches) 
+                        # size of image +25% for colorbar
+                    4.8 # height of final image (in inches)
+                ),
+                x_label=r"X [mm]", y_label=r"Y [mm]", 
+                cbar_label=r"Cells per mm$^2$",
+                save_name = args.dir_to_analyze+"isodensity_map.png"
+            )
+
         # Collect information to save
         number_of_cells = len(ROIs) - 1   # Background is ROI 0, subtract 1
         mean_background_luminance = np.mean(luminances_of_ROIs_by_ROI[0])
