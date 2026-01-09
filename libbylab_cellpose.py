@@ -428,8 +428,8 @@ def main():
             hist2d(
                 *(centers.T * millimeters_per_pixel), # Convert location of cell centers to locations in millimeters
                 bins=(
-                    np.arange( image_width // (args.isodensity_map_binsize/millimeters_per_pixel) + 1 ), # X bins
-                    np.arange( image_height // (args.isodensity_map_binsize/millimeters_per_pixel) + 1 ) # Y bins
+                    np.arange( 0, int(image_width  * millimeters_per_pixel) + 1, args.isodensity_map_binsize ), # X bins
+                    np.arange( 0, int(image_height * millimeters_per_pixel) + 1, args.isodensity_map_binsize ) # Y bins
                 ), # Get the number of bins in each dimension based on the image size and requested binsize
                 figsize=(
                     4.8 * (image_width/image_height) * 1.25, # Width of final image (in inches) 
