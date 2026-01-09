@@ -288,7 +288,7 @@ def main():
         with open(args.update_csv) as old_csv:
             comments = [next(old_csv) for _ in range(2)]
         model = comments[0][13:-1]
-        channels = [int(x) for x in comments[1][13:].split("]")[0].split(",")]
+        channels = [int(x.strip()) for x in comments[1][12:].split("Cell diameter")[0].split(" ")]
         cell_diameter = float(comments[1].split(":")[-1][:-1])
         old_image_files = np.loadtxt(
             args.update_csv, skiprows=3, dtype=str, delimiter=",", usecols=[0])
