@@ -299,8 +299,8 @@ def main():
               "area, width, and height calculation.")
     )
     parser.add_argument(
-        '--image_extension', type=str, default="JPG",
-        help="Extension of the images you intend to analyze.")
+        '--image_extensions', type=str, nargs="*", default=["JPG"],
+        help="Extensions of the images you intend to analyze. Case sensitive.")
     parser.add_argument(
         '--save_boundary_images', action="store_true",
         help=("If present, will save pngs depicting rectangular boundaries "
@@ -321,7 +321,8 @@ def main():
         args.dir_to_analyze += "/"
     dir_contents = os.listdir(args.dir_to_analyze)
     image_files = [ args.dir_to_analyze+f 
-                    for f in dir_contents if f[-4:]==("."+args.image_extension) ]
+                    for f in dir_contents 
+                    if f.split(".")[-1] in args.image_extensions]
     print(f"\nStarting script. Will analyze {len(image_files)} "
             f"images from:\n\t{args.dir_to_analyze}")
     image_files.sort()
@@ -412,7 +413,7 @@ def main():
         ] # Flatten luminances array so it's compatible with numpy
         centers, widths, heights = get_centers_widths_heights(
             masks, ROIs_not_edge,
-            image_files[i][:-1*len(args.image_extension)]+"pdf", 
+            image_files[i][ : image_files[i].rindex(".") ]+".pdf", 
             args.edge_buffer, 
             save_images=args.save_boundary_images
         )
