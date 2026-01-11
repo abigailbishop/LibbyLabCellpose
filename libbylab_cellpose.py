@@ -192,7 +192,7 @@ def hist2d(
     bins=10, xyranges=None, 
     weights=None, density=None, 
     x_label=None, y_label=None, title=None,
-    cbar_min=None, cbar_max=None, cbar_label=None, cbar_norm=None, 
+    cbar_min=None, cbar_max=None, cbar_label=None, cbar_norm=None, cbar_scaling=1,
     save_name=None, white_background_limit=True
 ):
     """
@@ -207,8 +207,8 @@ def hist2d(
         weights=weights, density=density
     )
     extent = [xbins[0], xbins[-1], ybins[0], ybins[-1]]
-    mappable = ax.imshow(H.T, extent=extent, cmap=cmap, 
-                         origin='lower', aspect='equal', norm=cbar_norm)
+    mappable = ax.imshow(H.T*cbar_scaling, extent=extent, cmap=cmap, 
+                         origin='upper', aspect='equal', norm=cbar_norm)
     
     if x_label  !=None: ax.set_xlabel(x_label)
     if y_label  !=None: ax.set_ylabel(y_label)
@@ -422,23 +422,26 @@ def main():
         # Make figure size real
 
         if args.plot_isodensity_map:
-            image_width = cellpose_image.shape[1] # in pixels
-            image_height = cellpose_image.shape[0] # in pixels
             millimeters_per_pixel = args.um_per_pixel/1000
+            xs = centers[:,0] * millimeters_per_pixel # Convert location of cell centers to locations in millimeters
+            ys = centers[:,1] * millimeters_per_pixel # Convert location of cell centers to locations in millimeters
+            image_width = cellpose_image.shape[1] * millimeters_per_pixel # in millimeters
+            image_height = cellpose_image.shape[0] * millimeters_per_pixel # in millimeters
+            binsize = args.isodensity_map_binsize
             hist2d(
-                *(centers.T * millimeters_per_pixel), # Convert location of cell centers to locations in millimeters
+                xs, ys, 
                 bins=(
-                    np.arange( 0, int(image_width  * millimeters_per_pixel) + 1, args.isodensity_map_binsize ), # X bins
-                    np.arange( 0, int(image_height * millimeters_per_pixel) + 1, args.isodensity_map_binsize ) # Y bins
+                    np.arange( 0, ((image_width //binsize) + 1) * binsize, binsize), # X bins
+                    np.arange( 0, ((image_height//binsize) + 1) * binsize, binsize) # Y bins
                 ), # Get the number of bins in each dimension based on the image size and requested binsize
                 figsize=(
-                    4.8 * (image_width/image_height) * 1.25, # Width of final image (in inches) 
-                        # size of image +25% for colorbar
+                    4.8 * (image_width/image_height) + 1, # Width of final image (in inches) 
+                        # size of image +1 inch for colorbar
                     4.8 # height of final image (in inches)
                 ),
                 x_label=r"X [mm]", y_label=r"Y [mm]", 
-                cbar_label=r"Cells per mm$^2$",
-                save_name = args.dir_to_analyze+"isodensity_map.png"
+                cbar_label=r"Cells per mm$^2$", cbar_scaling=1/args.isodensity_map_binsize**2,
+                save_name = "test_isodensity.png"
             )
 
         # Collect information to save
