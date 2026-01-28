@@ -338,7 +338,30 @@ def main():
         if int(cellpose_version.split(".")[0]) >= 4: 
             model = models.CellposeModel(pretrained_model=args.model_type)
         else:
+            if (
+                not os.path.exists( os.path.join(str(models._MODEL_DIR_ENV), args.model_type) )
+                and
+                not os.path.exists( os.path.join(str(models._MODEL_DIR_DEFAULT), args.model_type) )
+            ):
+                print(
+                    "WARNING: The model you passed is not available in one of",
+                    "the places Cellpose looks for models in:\n        ",
+                    [str(path) for path in [models._MODEL_DIR_ENV, models._MODEL_DIR_DEFAULT] if path is not None],
+                    "\n         Cellpose may load a default model or crash while trying",
+                    "to load the model you requested:\n        ", 
+                    args.model_type,
+                    "\n         You may need to move your model to one of the",
+                    "expected locations listed above and try again.\n"
+                )
             model = models.CellposeModel(model_type=args.model_type)
+        if args.model_type != os.path.basename(str(model.pretrained_model[0])): 
+            print(
+                f"The model you requested ({args.model_type}) is different from "
+                f"the one Cellpose loaded ({model.pretrained_model})"
+            )
+            if input("Would you like to continue? (y/n)").strip().lower() != "y":
+                print("Ending script")
+                return -1
         channels = [args.cytoplasm_color, args.nucleus_color]
     
     # Load old csv file and updated seg files (if we're updating csv)
@@ -441,7 +464,7 @@ def main():
                 ),
                 x_label=r"X [mm]", y_label=r"Y [mm]", 
                 cbar_label=r"Cells per mm$^2$", cbar_scaling=1/args.isodensity_map_binsize**2,
-                save_name = "test_isodensity.png"
+                save_name = image_files[i][ : image_files[i].rindex(".") ]+"_isodensity.png"
             )
 
         # Collect information to save
