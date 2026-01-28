@@ -96,14 +96,10 @@ Here's an example of the output:
 (cellpose) abigailbishop@vision cellpose % python libbylab_cellpose.py -h
 
 Loading Packages ... Done!
-usage: libbylab_cellpose.py [-h] [--cytoplasm_color CYTOPLASM_COLOR]
-                            [--nucleus_color NUCLEUS_COLOR]
-                            [--cell_diameter CELL_DIAMETER]
-                            [--um_per_pixel UM_PER_PIXEL]
-                            [--update_csv UPDATE_CSV]
-                            [--edge_buffer EDGE_BUFFER]
-                            [--image_extension IMAGE_EXTENSION]
-                            [--save_boundary_images]
+usage: libbylab_cellpose.py [-h] [--cytoplasm_color CYTOPLASM_COLOR] [--nucleus_color NUCLEUS_COLOR] [--cell_diameter CELL_DIAMETER]
+                            [--um_per_pixel UM_PER_PIXEL] [--update_csv UPDATE_CSV] [--edge_buffer EDGE_BUFFER]
+                            [--image_extensions [IMAGE_EXTENSIONS ...]] [--save_boundary_images] [--plot_isodensity_map]
+                            [--isodensity_map_binsize ISODENSITY_MAP_BINSIZE]
                             dir_to_analyze model_type
 
 positional arguments:
@@ -121,14 +117,17 @@ options:
   --um_per_pixel UM_PER_PIXEL
                         Micrometers per pixel.
   --update_csv UPDATE_CSV
-                        If provided, code will update csv output in
-                        --dir_to_analyze.
+                        If provided, code will update csv output in --dir_to_analyze.
   --edge_buffer EDGE_BUFFER
-                        ROIs within this many pixels of the edge are ignored in
-                        the area, width, and height calculation.
-  --image_extension IMAGE_EXTENSION
-                        Extension of the images you intend to analyze.
+                        ROIs within this many pixels of the edge are ignored in the area, width, and height calculation.
+  --image_extensions [IMAGE_EXTENSIONS ...]
+                        Extensions of the images you intend to analyze. Case sensitive.
   --save_boundary_images
-                        If present, will save pngs depicting rectangular
-                        boundaries used to calculate cell area, width, and height.
+                        If present, will save pngs depicting rectangular boundaries used to calculate cell area, width, and height.
+  --plot_isodensity_map
+                        If present, will save an isodensity map of the identified cells.
+  --isodensity_map_binsize ISODENSITY_MAP_BINSIZE
+                        Size of isodensity map bins in millimeters.
+(cellpose2_env) (base) abigailbishop@vision LibbyLabCellpose % 
+
 ```
