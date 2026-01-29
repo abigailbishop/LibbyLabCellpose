@@ -125,9 +125,8 @@ options:
   --save_boundary_images
                         If present, will save pngs depicting rectangular boundaries used to calculate cell area, width, and height.
   --plot_isodensity_map
-                        If present, will save an isodensity map of the identified cells.
+                        If present, will save an isodensity map for each image using the identified cells.
   --isodensity_map_binsize ISODENSITY_MAP_BINSIZE
                         Size of isodensity map bins in millimeters.
-(cellpose2_env) (base) abigailbishop@vision LibbyLabCellpose % 
 
 ```

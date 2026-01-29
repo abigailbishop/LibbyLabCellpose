@@ -308,7 +308,8 @@ def main():
     )
     parser.add_argument(
         '--plot_isodensity_map', action="store_true",
-        help=("If present, will save an isodensity map of the identified cells.")
+        help=("If present, will save an isodensity map for each image using "
+              "the identified cells.")
     )
     parser.add_argument(
         '--isodensity_map_binsize', type=float, default=1,
@@ -442,8 +443,6 @@ def main():
         )
 
         # Create the isodensity map, if one was requested
-        # Make figure size real
-
         if args.plot_isodensity_map:
             millimeters_per_pixel = args.um_per_pixel/1000
             xs = centers[:,0] * millimeters_per_pixel # Convert location of cell centers to locations in millimeters
@@ -456,10 +455,10 @@ def main():
                 bins=(
                     np.arange( 0, ((image_width //binsize) + 1) * binsize, binsize), # X bins
                     np.arange( 0, ((image_height//binsize) + 1) * binsize, binsize) # Y bins
-                ), # Get the number of bins in each dimension based on the image size and requested binsize
+                ), # Define the bins in each dimension based on the image size and requested binsize
                 figsize=(
                     4.8 * (image_width/image_height) + 1, # Width of final image (in inches) 
-                        # size of image +1 inch for colorbar
+                        # Scaled width of image +1 inch for colorbar
                     4.8 # height of final image (in inches)
                 ),
                 x_label=r"X [mm]", y_label=r"Y [mm]", 
