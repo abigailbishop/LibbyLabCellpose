@@ -196,7 +196,67 @@ def hist2d(
     save_name=None, white_background_limit=True
 ):
     """
-    Plots a 2D histogram 
+    Plots a 2D histogram from the provided array of x and y locations.
+
+    Parameters
+    ----------
+    x_array : array_like
+        X locations that will be plotted in the 2D histogram. Should have the
+        same size as `y_array`
+    y_array : array_like
+        Y locations that will be plotted in the 2D histogram. Should have the
+        same size as `x_array`
+    cmap : str or matplotlib.colors.ListedColormap
+        Colormap to use in the 2D histogram
+    figsize : iterable
+        Dimensions of the whole 2D histogram figure
+    bins : "int or sequence of scalars or str"
+        Defines the number of bins or the bin edges in X and/or Y directions.
+        Passed to the numpy.histogram2d() `bins` argument. 
+        More information available in the numpy API.
+    xyranges : (float, float)
+        If provided, defines the upper and lower allowed range of bin counts.
+        Passed to the numpy.histogram2d() `ranges` argument. 
+        More information available in the numpy API.
+    weights : array_like
+        Weights for each X and Y data. Should have the same size as `x_array` 
+        and `y_array`. Colorbar label will include the word "Weighted" if this
+        parameter is not `None`.
+    density : bool
+        If `True`, will normalize the 2D histogram so that each bin count 
+        reflects the probability density function for that bin.
+    x_label : str
+        Label for the X-axis of the figure
+    y_label : str
+        Label for the Y-axis of the figure
+    cbar_min : float
+        Minimum value on the colorbar / for a bin
+    cbar_max : float
+        Maximum value on the colorbar / for a bin
+    cbar_label : str
+        Label to assign to the figure's color bar. Automatically determined 
+        if this argument is `None`
+    cbar_norm : str or matplotlib.colors.Normalize
+        Method by which the colorbar will be scaled. Linear by default
+        Other options include: "log", "symlog", "logit"
+        Passed to the matplotlib.axes.Axes.imshow `norm` parameter.
+        More information on the matplotlib.axes.Axes.imshow API.
+    cbar_scaling : float
+        Factor by which each bin count should be multiplied by. For example,
+        isodensity maps require a factor `1/bin_area` to be passed to convert
+        bin counts into cell densities per bin. 
+    save_name : str
+        The path to where the created figure should be saved.
+    white_background_limit : bool
+        Sets empty / 0-count cells to white instead of the minimum value of 
+        the colormap.
+
+    Returns
+    -------
+    fig : matplotlib.figure.Figure
+        Output from matplotlib.subplots modified to include 2D histogram data
+    ax : matplotlib.axes.Axes
+        Output from matplotlib.subplots modified to include 2D histogram data
     """
     
     fig, ax = matplotlib.pyplot.subplots(figsize=figsize)
